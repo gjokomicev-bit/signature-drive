@@ -8,7 +8,7 @@ export const SITE = {
   contact: {
     email: "info@signature-drive.ch",
     phone: "+41 31 000 00 00",
-    whatsapp: "+41 79 000 00 00",
+    whatsapp: "+41 79 174 78 63",
     address: {
       street: "Musterstrasse 1",
       postalCode: "3000",
