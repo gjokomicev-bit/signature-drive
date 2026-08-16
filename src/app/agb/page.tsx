@@ -49,14 +49,7 @@ export default function AgbPage() {
             Fahrzeugübergabe fällig.
           </p>
 
-          <h2>5. Kaution</h2>
-          <p>
-            Bei Fahrzeugübergabe wird eine Kaution in der im gewählten Tarif angegebenen Höhe
-            hinterlegt. Die Kaution dient zur Deckung von Selbstbehalt, Bussen, Reinigungs- und
-            Schadenskosten und wird nach unbeschädigter Rückgabe zurückerstattet.
-          </p>
-
-          <h2>6. Kilometerregelung</h2>
+          <h2>5. Kilometerregelung</h2>
           <p>
             Jedem Mietvertrag liegt ein im Fahrzeug und der gewählten Kilometeroption
             definiertes Kilometerkontingent zugrunde. Mehrkilometer werden gemäss dem für das
@@ -64,15 +57,14 @@ export default function AgbPage() {
             Kilometer gebucht wurden.
           </p>
 
-          <h2>7. Versicherung und Selbstbehalt</h2>
+          <h2>6. Versicherung und Selbstbehalt</h2>
           <p>
-            Die Fahrzeuge sind vollkaskoversichert. Der Selbstbehalt richtet sich nach dem
-            gewählten Tarif. Vorsätzlich oder grobfahrlässig verursachte Schäden sowie Schäden
-            unter Einfluss von Alkohol, Drogen oder Medikamenten sind von der Versicherung
-            ausgeschlossen und gehen zulasten der Mieterin.
+            Die Fahrzeuge sind vollkaskoversichert. Vorsätzlich oder grobfahrlässig verursachte
+            Schäden sowie Schäden unter Einfluss von Alkohol, Drogen oder Medikamenten sind von
+            der Versicherung ausgeschlossen und gehen zulasten der Mieterin.
           </p>
 
-          <h2>8. Nutzung des Fahrzeugs</h2>
+          <h2>7. Nutzung des Fahrzeugs</h2>
           <ul>
             <li>Das Fahrzeug darf nur von der im Mietvertrag genannten und berechtigten Person gelenkt werden.</li>
             <li>Die Teilnahme an Rennen, Fahrsicherheitstrainings auf Rennstrecken sowie die Weitervermietung sind untersagt.</li>
@@ -80,28 +72,28 @@ export default function AgbPage() {
             <li>Fahrten ins Ausland bedürfen der vorgängigen schriftlichen Zustimmung der Vermieterin.</li>
           </ul>
 
-          <h2>9. Rückgabe</h2>
+          <h2>8. Rückgabe</h2>
           <p>
             Das Fahrzeug ist zum vereinbarten Zeitpunkt, im vereinbarten Zustand und mit
             vollem Tank an die Vermieterin zurückzugeben. Bei verspäteter Rückgabe wird der
             entsprechende Tarif anteilig nachverrechnet.
           </p>
 
-          <h2>10. Stornierung</h2>
+          <h2>9. Stornierung</h2>
           <p>
             Die Stornofristen richten sich nach dem gebuchten Tarif und sind auf der Website
             sowie im Mietvertrag ersichtlich. Bei Nichtantritt ohne rechtzeitige Stornierung
             kann die Vermieterin den vollen Mietpreis in Rechnung stellen.
           </p>
 
-          <h2>11. Haftung</h2>
+          <h2>10. Haftung</h2>
           <p>
             Die Vermieterin haftet nicht für indirekte Schäden oder Folgeschäden, soweit
             gesetzlich zulässig. Die Mieterin haftet für sämtliche während der Mietdauer am
             Fahrzeug entstandenen Schäden im Rahmen des vereinbarten Selbstbehalts.
           </p>
 
-          <h2>12. Schlussbestimmungen</h2>
+          <h2>11. Schlussbestimmungen</h2>
           <p>
             Es gilt schweizerisches Recht. Gerichtsstand ist, soweit gesetzlich zulässig, der
             Sitz der Vermieterin in {SITE.contact.address.city}.

@@ -46,7 +46,6 @@ export interface PriceBreakdown {
   basePrice: number;
   extrasTotal: number;
   extrasLines: PriceBreakdownLine[];
-  deposit: number;
   subtotal: number;
   total: number;
 }

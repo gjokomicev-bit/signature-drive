@@ -136,9 +136,6 @@ export default async function VehicleDetailPage({
               <p className="mt-2 text-3xl font-light text-foreground">
                 {formatCurrency(startingPrice)}
               </p>
-              <p className="mt-1 text-sm text-foreground/50">
-                zzgl. Kaution {formatCurrency(vehicle.pricing.deposit)}
-              </p>
 
               <dl className="mt-6 flex flex-col divide-y divide-border-subtle border-y border-border-subtle text-sm">
                 {vehicle.pricing.rateBrackets.map((bracket) => (

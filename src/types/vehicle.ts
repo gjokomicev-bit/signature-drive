@@ -16,7 +16,6 @@ export interface VehicleSpecs {
 
 export interface VehiclePricing {
   currency: "CHF";
-  deposit: number;
   /** Preis pro Mehrkilometer, sobald das inkludierte Kontingent einer Variante überschritten wird. */
   extraKmPrice: number;
   rateBrackets: RateBracket[];

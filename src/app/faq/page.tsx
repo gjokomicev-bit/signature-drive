@@ -14,14 +14,9 @@ const FAQS = [
     answer: `Das Mindestalter beträgt ${SITE.business.minAge} Jahre. Zudem wird ein Führerausweis vorausgesetzt, der seit mindestens ${SITE.business.minLicenseYears} Jahren gültig ist.`,
   },
   {
-    question: "Wie funktioniert die Kaution?",
-    answer:
-      "Bei Fahrzeugübergabe wird eine Kaution hinterlegt, deren Höhe vom gewählten Fahrzeug und Tarif abhängt. Die Kaution wird bei unbeschädigter Rückgabe vollständig rückerstattet.",
-  },
-  {
     question: "Was ist im Mietpreis inklusive?",
     answer:
-      "Der Mietpreis beinhaltet Vollkaskoversicherung gemäss gewähltem Tarif sowie das im Fahrzeug hinterlegte Kilometerkontingent. Zusatzleistungen wie Lieferservice oder Zusatzfahrer können individuell hinzugebucht werden.",
+      "Der Mietpreis beinhaltet Vollkaskoversicherung sowie das beim gewählten Mietdauer-Paket hinterlegte Kilometerkontingent. Zusatzleistungen wie Lieferservice oder Zusatzfahrer können individuell hinzugebucht werden.",
   },
   {
     question: "Kann ich das Fahrzeug ausserhalb der Region abholen lassen?",

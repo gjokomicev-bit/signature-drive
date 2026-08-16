@@ -25,11 +25,6 @@ export function PriceSummary({ breakdown }: { breakdown: PriceBreakdown }) {
           <dt className="text-foreground">Gesamtpreis</dt>
           <dd className="text-foreground">{formatCurrency(breakdown.total)}</dd>
         </div>
-
-        <div className="flex justify-between text-xs text-foreground/50">
-          <dt>Kaution (rückerstattbar)</dt>
-          <dd>{formatCurrency(breakdown.deposit)}</dd>
-        </div>
       </dl>
     </div>
   );

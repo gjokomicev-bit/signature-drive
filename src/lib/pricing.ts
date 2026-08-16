@@ -66,7 +66,6 @@ export function calculatePrice(input: PricingInput): PricingResult {
     basePrice: variant.price,
     extrasTotal,
     extrasLines,
-    deposit: vehicle.pricing.deposit,
     subtotal,
     total,
   };
