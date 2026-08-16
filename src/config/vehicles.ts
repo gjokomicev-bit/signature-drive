@@ -81,8 +81,6 @@ export const VEHICLES: Vehicle[] = [
     gallery: [
       "/vehicles/lamborghini-urus/gallery-1.jpg",
       "/vehicles/lamborghini-urus/gallery-2.jpg",
-      "/vehicles/lamborghini-urus/gallery-3.jpg",
-      "/vehicles/lamborghini-urus/gallery-4.jpg",
     ],
     shortDescription:
       "Der Super-SUV: brachiale Performance, italienisches Design, Platz für die ganze Familie.",
