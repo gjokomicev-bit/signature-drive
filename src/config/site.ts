@@ -3,7 +3,7 @@ export const SITE = {
   claim: "Luxury. Performance. Experience.",
   description:
     "Exklusive Vermietung von Performance- und Luxusfahrzeugen in Bern, Berner Oberland, Thun und Interlaken.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.signature-drive.ch",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.signature-drive.ch",
   region: "Bern · Berner Oberland · Thun · Interlaken",
   contact: {
     email: "info@signature-drive.ch",
