@@ -51,7 +51,7 @@ export const VEHICLES: Vehicle[] = [
     },
     pricing: {
       currency: "CHF",
-      extraKmPrice: 8,
+      extraKmPrice: 3.5,
       rateBrackets: STANDARD_RATE_BRACKETS,
     },
   },
@@ -93,7 +93,7 @@ export const VEHICLES: Vehicle[] = [
     },
     pricing: {
       currency: "CHF",
-      extraKmPrice: 5,
+      extraKmPrice: 3.5,
       rateBrackets: STANDARD_RATE_BRACKETS,
     },
   },

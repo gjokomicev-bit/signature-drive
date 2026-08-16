@@ -2,7 +2,8 @@ export function formatCurrency(amount: number, currency = "CHF"): string {
   return new Intl.NumberFormat("de-CH", {
     style: "currency",
     currency,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
