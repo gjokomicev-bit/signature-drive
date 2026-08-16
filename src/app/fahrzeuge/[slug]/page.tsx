@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Button } from "@/components/ui/Button";
-import { VehiclePlaceholder } from "@/components/vehicles/VehiclePlaceholder";
+import { VehicleMedia } from "@/components/vehicles/VehicleMedia";
 import { VehicleSpecs } from "@/components/vehicles/VehicleSpecs";
 import { VEHICLES, getVehicleBySlug } from "@/config/vehicles";
 import { formatCurrency } from "@/lib/format";
@@ -62,7 +62,14 @@ export default async function VehicleDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="relative h-[70svh] min-h-[420px]">
-        <VehiclePlaceholder vehicle={vehicle} className="h-full w-full" label={vehicle.category} />
+        <VehicleMedia
+          vehicle={vehicle}
+          src={vehicle.heroImage}
+          alt={`${vehicle.brand} ${vehicle.model}`}
+          className="h-full w-full"
+          label={vehicle.category}
+          priority
+        />
         {!vehicle.available && (
           <span className="absolute right-6 top-6 bg-ink px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-ink-foreground">
             Auf Anfrage
@@ -105,13 +112,16 @@ export default async function VehicleDetailPage({
             </div>
 
             <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {vehicle.gallery.map((_, index) => (
-                <VehiclePlaceholder
-                  key={index}
-                  vehicle={vehicle}
-                  className="aspect-square"
-                  label={`0${index + 1}`}
-                />
+              {vehicle.gallery.map((galleryImage, index) => (
+                <div key={galleryImage} className="relative aspect-square overflow-hidden">
+                  <VehicleMedia
+                    vehicle={vehicle}
+                    src={galleryImage}
+                    alt={`${vehicle.brand} ${vehicle.model} – Bild ${index + 1}`}
+                    className="h-full w-full"
+                    label={`0${index + 1}`}
+                  />
+                </div>
               ))}
             </div>
           </div>

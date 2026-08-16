@@ -1,14 +1,16 @@
 import Link from "next/link";
 import type { Vehicle } from "@/types/vehicle";
-import { VehiclePlaceholder } from "./VehiclePlaceholder";
+import { VehicleMedia } from "./VehicleMedia";
 import { formatCurrency } from "@/lib/format";
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
     <Link href={`/fahrzeuge/${vehicle.slug}`} className="group block">
       <div className="relative aspect-[4/3] overflow-hidden">
-        <VehiclePlaceholder
+        <VehicleMedia
           vehicle={vehicle}
+          src={vehicle.heroImage}
+          alt={`${vehicle.brand} ${vehicle.model}`}
           className="h-full w-full transition-transform duration-700 ease-out group-hover:scale-105"
         />
       </div>

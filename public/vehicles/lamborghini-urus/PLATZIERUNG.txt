@@ -1,0 +1,10 @@
+Dateien hier ablegen (werden automatisch erkannt und angezeigt):
+
+hero.jpg        - Hauptbild (Fahrzeug-Detailseite & Fahrzeugkarten)
+gallery-1.jpg   - Galeriebild 1
+gallery-2.jpg   - Galeriebild 2
+gallery-3.jpg   - Galeriebild 3
+gallery-4.jpg   - Galeriebild 4
+
+Empfehlung: Querformat, mind. 1600x1200px, JPG oder WebP.
+Diese Datei kann danach gelöscht werden.
