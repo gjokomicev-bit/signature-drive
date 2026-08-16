@@ -4,7 +4,7 @@ export const EXTRAS: Extra[] = [
   {
     id: "delivery",
     label: "Lieferung & Abholung",
-    description: "Fahrzeugzustellung und -abholung an Ihrem Wunschort in der Region Bern / Berner Oberland.",
+    description: "Fahrzeugzustellung und -abholung an Ihrem Wunschort in der Region Bern / Thun / Aargau / Zürich.",
     priceType: "flat",
     price: 150,
   },

@@ -69,7 +69,7 @@ export function Footer() {
 
         <div className="mt-16 flex flex-col gap-4 border-t border-ink-foreground/10 pt-8 text-xs text-ink-foreground/40 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Signature Drive. Alle Rechte vorbehalten.</span>
-          <span>Bern · Berner Oberland · Thun · Interlaken</span>
+          <span>{SITE.region}</span>
         </div>
       </div>
     </footer>

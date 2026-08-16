@@ -1,7 +1,7 @@
 # Signature Drive
 
-Premium-Vermietung von Performance- und Luxusfahrzeugen in Bern, Berner Oberland, Thun und
-Interlaken. *Luxury. Performance. Experience.*
+Premium-Vermietung von Performance- und Luxusfahrzeugen in Bern, Thun, Aargau und
+Zürich. *Luxury. Performance. Experience.*
 
 ## Tech-Stack
 

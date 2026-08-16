@@ -10,7 +10,7 @@ export function CtaSection() {
         Bereit für Ihr nächstes Fahrerlebnis?
       </h2>
       <p className="mx-auto mt-4 max-w-lg text-sm text-ink-foreground/60 sm:text-base">
-        Sichern Sie sich Ihr Wunschfahrzeug in Bern, Berner Oberland, Thun oder Interlaken.
+        Sichern Sie sich Ihr Wunschfahrzeug in Bern, Thun, Aargau oder Zürich.
       </p>
       <div className="mt-10 flex justify-center">
         <Button href="/buchung" size="lg" invert>

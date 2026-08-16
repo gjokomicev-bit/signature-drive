@@ -26,7 +26,7 @@ const FAQS = [
   {
     question: "Kann ich das Fahrzeug ausserhalb der Region abholen lassen?",
     answer:
-      "Gerne liefern wir Ihr Fahrzeug gegen Aufpreis an einen Wunschort in der Region Bern, Berner Oberland, Thun oder Interlaken. Kontaktieren Sie uns für individuelle Anfragen.",
+      "Gerne liefern wir Ihr Fahrzeug gegen Aufpreis an einen Wunschort in der Region Bern, Thun, Aargau oder Zürich. Kontaktieren Sie uns für individuelle Anfragen.",
   },
   {
     question: "Wie kann ich eine Buchung stornieren?",
