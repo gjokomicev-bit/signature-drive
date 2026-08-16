@@ -14,6 +14,8 @@ interface SharedProps {
 
 interface ButtonAsLink extends SharedProps {
   href: string;
+  target?: string;
+  rel?: string;
 }
 
 interface ButtonAsButton extends SharedProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> {
@@ -56,8 +58,9 @@ export function Button({
   const classes = `${base} ${sizeClasses[size]} ${getVariantClasses(variant, invert)} ${className}`;
 
   if (href) {
+    const { target, rel } = rest as ButtonAsLink;
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} target={target} rel={rel}>
         {children}
       </Link>
     );

@@ -8,6 +8,7 @@ import { VehicleSpecs } from "@/components/vehicles/VehicleSpecs";
 import { VEHICLES, getVehicleBySlug } from "@/config/vehicles";
 import { formatCurrency } from "@/lib/format";
 import { SITE } from "@/config/site";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 export function generateStaticParams() {
   return VEHICLES.map((vehicle) => ({ slug: vehicle.slug }));
@@ -144,8 +145,18 @@ export default async function VehicleDetailPage({
               <Button href={`/buchung?vehicle=${vehicle.slug}`} size="lg" className="mt-8 w-full">
                 Jetzt buchen
               </Button>
-              <Button href="/kontakt" variant="outline" size="lg" className="mt-3 w-full">
-                Frage stellen
+              <Button
+                href={buildWhatsAppLink(
+                  SITE.contact.whatsapp,
+                  `Hallo ${SITE.name}, ich interessiere mich für den ${vehicle.brand} ${vehicle.model}.`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outline"
+                size="lg"
+                className="mt-3 w-full"
+              >
+                Anfrage per WhatsApp
               </Button>
             </div>
           </aside>
