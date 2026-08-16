@@ -25,7 +25,6 @@ export function validateBookingRequest(data: BookingRequest): string[] {
   if (!c.postalCode?.trim()) errors.push("PLZ fehlt.");
   if (!c.city?.trim()) errors.push("Ort fehlt.");
   if (!c.country?.trim()) errors.push("Land fehlt.");
-  if (!c.licenseNumber?.trim()) errors.push("Führerscheinnummer fehlt.");
 
   if (!c.dateOfBirth) {
     errors.push("Geburtsdatum fehlt.");

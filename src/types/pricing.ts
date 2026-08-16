@@ -46,6 +46,7 @@ export interface PriceBreakdown {
   basePrice: number;
   extrasTotal: number;
   extrasLines: PriceBreakdownLine[];
+  campaignDiscount: number;
   subtotal: number;
   total: number;
 }

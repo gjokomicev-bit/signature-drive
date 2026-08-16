@@ -1,5 +1,6 @@
 import { getExtra } from "@/config/extras";
 import { getRateBracket, getRateBracketVariant } from "@/config/rate-brackets";
+import { SIGNATURE_DRIVE_CAMPAIGN } from "@/config/campaign";
 import { combineDateAndTime } from "@/lib/datetime";
 import type { Vehicle } from "@/types/vehicle";
 import type { PriceBreakdown, PriceBreakdownLine } from "@/types/pricing";
@@ -11,6 +12,7 @@ export interface PricingInput {
   bracketId: string;
   variantId: string;
   extraIds: string[];
+  signatureDriveOptIn: boolean;
 }
 
 export type PricingResult =
@@ -56,7 +58,10 @@ export function calculatePrice(input: PricingInput): PricingResult {
   const extrasTotal = extrasLines.reduce((sum, l) => sum + l.amount, 0);
 
   const subtotal = variant.price + extrasTotal;
-  const total = Math.round(subtotal);
+  const campaignDiscount = input.signatureDriveOptIn
+    ? Math.round((subtotal * SIGNATURE_DRIVE_CAMPAIGN.discountPercent) / 100)
+    : 0;
+  const total = Math.round(subtotal - campaignDiscount);
 
   const breakdown: PriceBreakdown = {
     currency: "CHF",
@@ -66,6 +71,7 @@ export function calculatePrice(input: PricingInput): PricingResult {
     basePrice: variant.price,
     extrasTotal,
     extrasLines,
+    campaignDiscount,
     subtotal,
     total,
   };

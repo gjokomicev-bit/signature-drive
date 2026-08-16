@@ -8,7 +8,6 @@ export interface CustomerDetails {
   city: string;
   country: string;
   dateOfBirth: string;
-  licenseNumber: string;
   message?: string;
 }
 
@@ -21,6 +20,8 @@ export interface BookingRequest {
   extraIds: string[];
   customer: CustomerDetails;
   acceptedTerms: boolean;
+  /** Optionale Teilnahme an der "Alpine Signature Drive & Win"-Aktion (siehe src/config/campaign.ts). */
+  signatureDriveOptIn: boolean;
 }
 
 export type BookingStatus = "pending" | "confirmed" | "cancelled";

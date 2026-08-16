@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     bracketId: body.bracketId,
     variantId: body.variantId,
     extraIds: body.extraIds,
+    signatureDriveOptIn: body.signatureDriveOptIn,
   });
   if (!pricing.ok) {
     return NextResponse.json({ error: pricing.error }, { status: 400 });

@@ -10,6 +10,7 @@ import { PriceSummary } from "./PriceSummary";
 import { getAvailableVehicles, getVehicleById } from "@/config/vehicles";
 import { STANDARD_RATE_BRACKETS } from "@/config/rate-brackets";
 import { EXTRAS } from "@/config/extras";
+import { SIGNATURE_DRIVE_CAMPAIGN } from "@/config/campaign";
 import { calculatePrice } from "@/lib/pricing";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { todayIsoDate } from "@/lib/datetime";
@@ -35,7 +36,6 @@ const EMPTY_CUSTOMER: CustomerDetails = {
   city: "",
   country: "Schweiz",
   dateOfBirth: "",
-  licenseNumber: "",
   message: "",
 };
 
@@ -51,6 +51,7 @@ function createInitialState(initialVehicleId?: string): BookingRequest {
     extraIds: [],
     customer: EMPTY_CUSTOMER,
     acceptedTerms: false,
+    signatureDriveOptIn: false,
   };
 }
 
@@ -75,8 +76,17 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
       bracketId: form.bracketId,
       variantId: form.variantId,
       extraIds: form.extraIds,
+      signatureDriveOptIn: form.signatureDriveOptIn,
     });
-  }, [vehicle, form.pickupDate, form.pickupTime, form.bracketId, form.variantId, form.extraIds]);
+  }, [
+    vehicle,
+    form.pickupDate,
+    form.pickupTime,
+    form.bracketId,
+    form.variantId,
+    form.extraIds,
+    form.signatureDriveOptIn,
+  ]);
 
   function update<K extends keyof BookingRequest>(key: K, value: BookingRequest[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -121,7 +131,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
     }
     if (step === 4) {
       const c = form.customer;
-      if (!c.firstName || !c.lastName || !c.email || !c.phone || !c.street || !c.postalCode || !c.city || !c.dateOfBirth || !c.licenseNumber) {
+      if (!c.firstName || !c.lastName || !c.email || !c.phone || !c.street || !c.postalCode || !c.city || !c.dateOfBirth) {
         return "Bitte alle Pflichtfelder ausfüllen.";
       }
       if (!form.acceptedTerms) return "Bitte AGB akzeptieren, um fortzufahren.";
@@ -270,7 +280,6 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                 <TextField label="Ort" value={form.customer.city} onChange={(e) => updateCustomer("city", e.target.value)} required />
                 <TextField label="Land" value={form.customer.country} onChange={(e) => updateCustomer("country", e.target.value)} required />
                 <TextField label="Geburtsdatum" type="date" value={form.customer.dateOfBirth} onChange={(e) => updateCustomer("dateOfBirth", e.target.value)} required />
-                <TextField label="Führerscheinnummer" value={form.customer.licenseNumber} onChange={(e) => updateCustomer("licenseNumber", e.target.value)} required />
               </div>
               <TextField
                 label="Nachricht (optional)"
@@ -291,6 +300,21 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                     AGB
                   </a>{" "}
                   gelesen und akzeptiere diese.
+                </span>
+              </label>
+
+              <label className="flex items-start gap-3 border border-border-subtle p-4 text-sm text-foreground/70">
+                <input
+                  type="checkbox"
+                  checked={form.signatureDriveOptIn}
+                  onChange={(e) => update("signatureDriveOptIn", e.target.checked)}
+                  className="mt-1 h-4 w-4 accent-[var(--accent)]"
+                />
+                <span>
+                  <span className="block font-medium uppercase tracking-[0.1em] text-foreground">
+                    {SIGNATURE_DRIVE_CAMPAIGN.title} (optional)
+                  </span>
+                  <span className="mt-1 block text-foreground/60">{SIGNATURE_DRIVE_CAMPAIGN.description}</span>
                 </span>
               </label>
             </div>
@@ -320,6 +344,10 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">Kilometer</dt>
                     <dd className="text-foreground">{pricingResult.breakdown.variantLabel}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-foreground/60">{SIGNATURE_DRIVE_CAMPAIGN.title}</dt>
+                    <dd className="text-foreground">{form.signatureDriveOptIn ? "Ja" : "Nein"}</dd>
                   </div>
                 </dl>
               </div>

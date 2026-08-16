@@ -21,6 +21,13 @@ export function PriceSummary({ breakdown }: { breakdown: PriceBreakdown }) {
           </div>
         ))}
 
+        {breakdown.campaignDiscount > 0 && (
+          <div className="flex justify-between">
+            <dt className="text-accent">Alpine Signature Drive & Win (-10%)</dt>
+            <dd className="text-accent">−{formatCurrency(breakdown.campaignDiscount)}</dd>
+          </div>
+        )}
+
         <div className="flex justify-between border-t border-border-subtle pt-3 text-base font-medium">
           <dt className="text-foreground">Gesamtpreis</dt>
           <dd className="text-foreground">{formatCurrency(breakdown.total)}</dd>

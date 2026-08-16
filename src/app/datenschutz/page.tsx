@@ -28,10 +28,9 @@ export default function DatenschutzPage() {
           <h2>2. Welche Daten wir bearbeiten</h2>
           <p>
             Im Rahmen einer Buchungsanfrage erheben wir Name, Kontaktdaten (E-Mail, Telefon),
-            Adresse, Geburtsdatum und Führerscheinnummer sowie Angaben zum gewünschten
-            Fahrzeug, Mietzeitraum, Tarif und den gewählten Zusatzleistungen. Bei einer
-            Kontaktanfrage erheben wir Name, E-Mail-Adresse, optional Telefonnummer sowie den
-            Inhalt Ihrer Nachricht.
+            Adresse und Geburtsdatum sowie Angaben zum gewünschten Fahrzeug, Mietzeitraum,
+            Tarif und den gewählten Zusatzleistungen. Bei einer Kontaktanfrage erheben wir Name,
+            E-Mail-Adresse, optional Telefonnummer sowie den Inhalt Ihrer Nachricht.
           </p>
 
           <h2>3. Zweck der Bearbeitung</h2>
