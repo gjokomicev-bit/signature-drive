@@ -8,7 +8,7 @@ import type { Booking, BookingRequest, BlockedPeriod } from "@/types/booking";
  * implementiert, und in index.ts austauschen.
  */
 export interface BookingRepository {
-  create(request: BookingRequest, priceTotal: number): Promise<Booking>;
+  create(request: BookingRequest, pickupAt: Date, returnAt: Date, priceTotal: number): Promise<Booking>;
   listAll(): Promise<Booking[]>;
   listByVehicle(vehicleId: string): Promise<Booking[]>;
 }

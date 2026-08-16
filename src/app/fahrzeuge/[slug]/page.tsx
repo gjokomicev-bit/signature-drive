@@ -9,6 +9,7 @@ import { VEHICLES, getVehicleBySlug } from "@/config/vehicles";
 import { formatCurrency } from "@/lib/format";
 import { SITE } from "@/config/site";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { getStartingPrice } from "@/lib/pricing";
 
 export function generateStaticParams() {
   return VEHICLES.map((vehicle) => ({ slug: vehicle.slug }));
@@ -37,6 +38,8 @@ export default async function VehicleDetailPage({
   const vehicle = getVehicleBySlug(slug);
   if (!vehicle) notFound();
 
+  const startingPrice = getStartingPrice(vehicle);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Car",
@@ -48,7 +51,7 @@ export default async function VehicleDetailPage({
     offers: {
       "@type": "Offer",
       priceCurrency: vehicle.pricing.currency,
-      price: vehicle.pricing.dailyRate.pricePerDay,
+      price: startingPrice,
       availability: vehicle.available
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
@@ -131,15 +134,32 @@ export default async function VehicleDetailPage({
             <div className="border border-border-subtle p-8">
               <span className="text-xs uppercase tracking-[0.25em] text-foreground/50">Ab</span>
               <p className="mt-2 text-3xl font-light text-foreground">
-                {formatCurrency(vehicle.pricing.dailyRate.pricePerDay)}
-                <span className="text-base text-foreground/50"> / Tag</span>
+                {formatCurrency(startingPrice)}
               </p>
               <p className="mt-1 text-sm text-foreground/50">
                 zzgl. Kaution {formatCurrency(vehicle.pricing.deposit)}
               </p>
-              <p className="mt-4 text-sm text-foreground/60">
-                {vehicle.pricing.dailyRate.includedKmPerDay} km/Tag inklusive · Mehrkilometer{" "}
-                {formatCurrency(vehicle.pricing.extraKmPrice)}/km
+
+              <dl className="mt-6 flex flex-col divide-y divide-border-subtle border-y border-border-subtle text-sm">
+                {vehicle.pricing.rateBrackets.map((bracket) => (
+                  <div key={bracket.id} className="flex items-center justify-between py-2.5">
+                    <dt className="text-foreground/60">{bracket.label}</dt>
+                    <dd className="text-right text-foreground">
+                      {bracket.variants.map((variant) => (
+                        <span key={variant.id} className="block">
+                          {formatCurrency(variant.price)}
+                          <span className="text-foreground/40">
+                            {" "}
+                            ({variant.includedKm === "unlimited" ? "unbegrenzt" : `${variant.includedKm} km`})
+                          </span>
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-3 text-xs text-foreground/50">
+                Mehrkilometer {formatCurrency(vehicle.pricing.extraKmPrice)}/km
               </p>
 
               <Button href={`/buchung?vehicle=${vehicle.slug}`} size="lg" className="mt-8 w-full">

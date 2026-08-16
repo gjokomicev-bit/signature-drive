@@ -9,31 +9,10 @@ export function PriceSummary({ breakdown }: { breakdown: PriceBreakdown }) {
       <dl className="mt-4 flex flex-col gap-3 text-sm">
         <div className="flex justify-between">
           <dt className="text-foreground/60">
-            Mietpreis ({breakdown.units} {breakdown.unitLabel})
+            {breakdown.bracketLabel} · {breakdown.variantLabel}
           </dt>
           <dd className="text-foreground">{formatCurrency(breakdown.basePrice)}</dd>
         </div>
-
-        {breakdown.tariffAdjustment !== 0 && (
-          <div className="flex justify-between">
-            <dt className="text-foreground/60">Tarifanpassung</dt>
-            <dd className="text-foreground">{formatCurrency(breakdown.tariffAdjustment)}</dd>
-          </div>
-        )}
-
-        {breakdown.multiDayDiscount > 0 && (
-          <div className="flex justify-between">
-            <dt className="text-foreground/60">Mehrtagesrabatt</dt>
-            <dd className="text-accent">−{formatCurrency(breakdown.multiDayDiscount)}</dd>
-          </div>
-        )}
-
-        {breakdown.kmSurcharge > 0 && (
-          <div className="flex justify-between">
-            <dt className="text-foreground/60">Kilometerpaket</dt>
-            <dd className="text-foreground">{formatCurrency(breakdown.kmSurcharge)}</dd>
-          </div>
-        )}
 
         {breakdown.extrasLines.map((line) => (
           <div key={line.label} className="flex justify-between">

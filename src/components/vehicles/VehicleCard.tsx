@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Vehicle } from "@/types/vehicle";
 import { VehicleMedia } from "./VehicleMedia";
 import { formatCurrency } from "@/lib/format";
+import { getStartingPrice } from "@/lib/pricing";
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
@@ -23,7 +24,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between border-t border-border-subtle pt-4 text-sm">
-        <span className="text-foreground/50">ab {formatCurrency(vehicle.pricing.dailyRate.pricePerDay)} / Tag</span>
+        <span className="text-foreground/50">ab {formatCurrency(getStartingPrice(vehicle))}</span>
         <span className="uppercase tracking-[0.2em] text-accent group-hover:underline">Details</span>
       </div>
     </Link>

@@ -8,18 +8,18 @@ import { SelectableCard } from "./SelectableCard";
 import { StepIndicator } from "./StepIndicator";
 import { PriceSummary } from "./PriceSummary";
 import { getAvailableVehicles, getVehicleById } from "@/config/vehicles";
-import { TARIFF_PLANS } from "@/config/tariffs";
-import { KM_OPTIONS } from "@/config/km-options";
+import { STANDARD_RATE_BRACKETS } from "@/config/rate-brackets";
 import { EXTRAS } from "@/config/extras";
 import { calculatePrice } from "@/lib/pricing";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatDateTime } from "@/lib/format";
 import { todayIsoDate } from "@/lib/datetime";
 import type { BookingRequest, CustomerDetails } from "@/types/booking";
+import type { RateBracket } from "@/types/pricing";
 
 const STEPS = [
   { label: "Fahrzeug" },
+  { label: "Mietdauer" },
   { label: "Termin" },
-  { label: "Tarif & KM" },
   { label: "Extras" },
   { label: "Kundendaten" },
   { label: "Übersicht" },
@@ -40,14 +40,14 @@ const EMPTY_CUSTOMER: CustomerDetails = {
 };
 
 function createInitialState(initialVehicleId?: string): BookingRequest {
+  const vehicle = initialVehicleId ? getVehicleById(initialVehicleId) : undefined;
+  const brackets = vehicle?.pricing.rateBrackets ?? STANDARD_RATE_BRACKETS;
   return {
     vehicleId: initialVehicleId ?? "",
     pickupDate: "",
     pickupTime: "10:00",
-    returnDate: "",
-    returnTime: "10:00",
-    tariffId: TARIFF_PLANS[0].id,
-    kmOptionId: KM_OPTIONS[0].id,
+    bracketId: brackets[0].id,
+    variantId: brackets[0].variants[0].id,
     extraIds: [],
     customer: EMPTY_CUSTOMER,
     acceptedTerms: false,
@@ -64,6 +64,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
 
   const vehicle = useMemo(() => getVehicleById(form.vehicleId), [form.vehicleId]);
   const vehicles = useMemo(() => getAvailableVehicles(), []);
+  const rateBrackets: RateBracket[] = vehicle?.pricing.rateBrackets ?? STANDARD_RATE_BRACKETS;
 
   const pricingResult = useMemo(() => {
     if (!vehicle) return null;
@@ -71,16 +72,29 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
       vehicle,
       pickupDate: form.pickupDate,
       pickupTime: form.pickupTime,
-      returnDate: form.returnDate,
-      returnTime: form.returnTime,
-      tariffId: form.tariffId,
-      kmOptionId: form.kmOptionId,
+      bracketId: form.bracketId,
+      variantId: form.variantId,
       extraIds: form.extraIds,
     });
-  }, [vehicle, form.pickupDate, form.pickupTime, form.returnDate, form.returnTime, form.tariffId, form.kmOptionId, form.extraIds]);
+  }, [vehicle, form.pickupDate, form.pickupTime, form.bracketId, form.variantId, form.extraIds]);
 
   function update<K extends keyof BookingRequest>(key: K, value: BookingRequest[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function selectVehicle(vehicleId: string) {
+    const v = getVehicleById(vehicleId);
+    const brackets = v?.pricing.rateBrackets ?? STANDARD_RATE_BRACKETS;
+    setForm((prev) => ({
+      ...prev,
+      vehicleId,
+      bracketId: brackets[0].id,
+      variantId: brackets[0].variants[0].id,
+    }));
+  }
+
+  function selectBracketVariant(bracketId: string, variantId: string) {
+    setForm((prev) => ({ ...prev, bracketId, variantId }));
   }
 
   function updateCustomer<K extends keyof CustomerDetails>(key: K, value: CustomerDetails[K]) {
@@ -98,9 +112,9 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
     if (step === 0) {
       return vehicle ? null : "Bitte ein Fahrzeug auswählen.";
     }
-    if (step === 1) {
-      if (!form.pickupDate || !form.pickupTime || !form.returnDate || !form.returnTime) {
-        return "Bitte Abholung und Rückgabe vollständig angeben.";
+    if (step === 2) {
+      if (!form.pickupDate || !form.pickupTime) {
+        return "Bitte Abholdatum und -zeit angeben.";
       }
       if (pricingResult && !pricingResult.ok) return pricingResult.error;
       return null;
@@ -167,9 +181,9 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                 <SelectableCard
                   key={v.id}
                   selected={form.vehicleId === v.id}
-                  onSelect={() => update("vehicleId", v.id)}
+                  onSelect={() => selectVehicle(v.id)}
                   title={`${v.brand} ${v.model}`}
-                  subtitle={`ab ${formatCurrency(v.pricing.dailyRate.pricePerDay)}/Tag`}
+                  subtitle={`ab ${formatCurrency(Math.min(...v.pricing.rateBrackets.flatMap((b) => b.variants.map((variant) => variant.price))))}`}
                   description={v.shortDescription}
                 />
               ))}
@@ -177,6 +191,36 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
           )}
 
           {step === 1 && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {rateBrackets.map((bracket) => (
+                <div key={bracket.id} className="border border-border-subtle p-5">
+                  <span className="text-sm font-medium uppercase tracking-[0.1em] text-foreground">
+                    {bracket.label}
+                  </span>
+                  <div className="mt-3 flex flex-col gap-2">
+                    {bracket.variants.map((variant) => {
+                      const selected = form.bracketId === bracket.id && form.variantId === variant.id;
+                      return (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          onClick={() => selectBracketVariant(bracket.id, variant.id)}
+                          className={`flex items-center justify-between border px-4 py-3 text-left text-sm transition-colors ${
+                            selected ? "border-accent bg-surface" : "border-border-subtle hover:border-foreground/40"
+                          }`}
+                        >
+                          <span className="text-foreground/70">{variant.label}</span>
+                          <span className="text-accent">{formatCurrency(variant.price)}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {step === 2 && (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <TextField
                 label="Abholdatum"
@@ -191,69 +235,11 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                 value={form.pickupTime}
                 onChange={(e) => update("pickupTime", e.target.value)}
               />
-              <TextField
-                label="Rückgabedatum"
-                type="date"
-                min={form.pickupDate || todayIsoDate()}
-                value={form.returnDate}
-                onChange={(e) => update("returnDate", e.target.value)}
-              />
-              <TextField
-                label="Rückgabezeit"
-                type="time"
-                value={form.returnTime}
-                onChange={(e) => update("returnTime", e.target.value)}
-              />
               {pricingResult?.ok && (
                 <p className="text-sm text-foreground/60 sm:col-span-2">
-                  Mietdauer: {pricingResult.breakdown.units} {pricingResult.breakdown.unitLabel} (
-                  {pricingResult.breakdown.billingMode === "hourly" ? "Stundentarif" : "Tagestarif"})
+                  Rückgabe: {formatDateTime(pricingResult.returnAt)} Uhr ({pricingResult.breakdown.bracketLabel})
                 </p>
               )}
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="flex flex-col gap-10">
-              <div>
-                <h3 className="text-xs uppercase tracking-[0.2em] text-foreground/50">Tarif</h3>
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {TARIFF_PLANS.map((plan) => (
-                    <SelectableCard
-                      key={plan.id}
-                      selected={form.tariffId === plan.id}
-                      onSelect={() => update("tariffId", plan.id)}
-                      title={plan.label}
-                      subtitle={plan.priceMultiplier === 1 ? "Standard" : `+${Math.round((plan.priceMultiplier - 1) * 100)}%`}
-                      description={plan.description}
-                    >
-                      <ul className="mt-3 flex flex-col gap-1">
-                        {plan.includedServices.map((s) => (
-                          <li key={s} className="text-xs text-foreground/50">
-                            · {s}
-                          </li>
-                        ))}
-                      </ul>
-                    </SelectableCard>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xs uppercase tracking-[0.2em] text-foreground/50">Kilometeroption</h3>
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  {KM_OPTIONS.map((opt) => (
-                    <SelectableCard
-                      key={opt.id}
-                      selected={form.kmOptionId === opt.id}
-                      onSelect={() => update("kmOptionId", opt.id)}
-                      title={opt.label}
-                      subtitle={opt.surchargePerDay > 0 ? `+${formatCurrency(opt.surchargePerDay)}/Tag` : "inklusive"}
-                      description={opt.description}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
           )}
 
@@ -325,15 +311,15 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">Rückgabe</dt>
-                    <dd className="text-foreground">{form.returnDate} · {form.returnTime} Uhr</dd>
+                    <dd className="text-foreground">{formatDateTime(pricingResult.returnAt)} Uhr</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt className="text-foreground/60">Tarif</dt>
-                    <dd className="text-foreground">{TARIFF_PLANS.find((t) => t.id === form.tariffId)?.label}</dd>
+                    <dt className="text-foreground/60">Mietdauer</dt>
+                    <dd className="text-foreground">{pricingResult.breakdown.bracketLabel}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">Kilometer</dt>
-                    <dd className="text-foreground">{KM_OPTIONS.find((k) => k.id === form.kmOptionId)?.label}</dd>
+                    <dd className="text-foreground">{pricingResult.breakdown.variantLabel}</dd>
                   </div>
                 </dl>
               </div>
@@ -371,7 +357,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
             <PriceSummary breakdown={pricingResult.breakdown} />
           ) : (
             <div className="border border-border-subtle p-6 text-sm text-foreground/50">
-              Wählen Sie Fahrzeug sowie Abhol- und Rückgabezeitpunkt, um den Preis zu berechnen.
+              Wählen Sie Fahrzeug, Mietdauer und Abholzeitpunkt, um den Preis zu berechnen.
             </div>
           )}
         </aside>

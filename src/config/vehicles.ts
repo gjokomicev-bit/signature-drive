@@ -1,4 +1,5 @@
 import type { Vehicle } from "@/types/vehicle";
+import { STANDARD_RATE_BRACKETS } from "@/config/rate-brackets";
 
 /**
  * Zentrale Fahrzeug- und Preiskonfiguration.
@@ -51,22 +52,8 @@ export const VEHICLES: Vehicle[] = [
     pricing: {
       currency: "CHF",
       deposit: 10000,
-      hourlyRate: {
-        pricePerHour: 180,
-        minHours: 3,
-        maxHours: 8,
-        includedKm: 100,
-      },
-      dailyRate: {
-        pricePerDay: 1490,
-        includedKmPerDay: 200,
-        multiDayDiscounts: [
-          { minDays: 3, discountPercent: 5 },
-          { minDays: 7, discountPercent: 12 },
-          { minDays: 14, discountPercent: 20 },
-        ],
-      },
       extraKmPrice: 8,
+      rateBrackets: STANDARD_RATE_BRACKETS,
     },
   },
   {
@@ -108,22 +95,8 @@ export const VEHICLES: Vehicle[] = [
     pricing: {
       currency: "CHF",
       deposit: 8000,
-      hourlyRate: {
-        pricePerHour: 150,
-        minHours: 3,
-        maxHours: 8,
-        includedKm: 100,
-      },
-      dailyRate: {
-        pricePerDay: 1290,
-        includedKmPerDay: 250,
-        multiDayDiscounts: [
-          { minDays: 3, discountPercent: 5 },
-          { minDays: 7, discountPercent: 10 },
-          { minDays: 14, discountPercent: 18 },
-        ],
-      },
       extraKmPrice: 5,
+      rateBrackets: STANDARD_RATE_BRACKETS,
     },
   },
 ];

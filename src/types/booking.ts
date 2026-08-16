@@ -16,10 +16,8 @@ export interface BookingRequest {
   vehicleId: string;
   pickupDate: string;
   pickupTime: string;
-  returnDate: string;
-  returnTime: string;
-  tariffId: string;
-  kmOptionId: string;
+  bracketId: string;
+  variantId: string;
   extraIds: string[];
   customer: CustomerDetails;
   acceptedTerms: boolean;
@@ -32,6 +30,9 @@ export interface Booking {
   status: BookingStatus;
   createdAt: string;
   request: BookingRequest;
+  /** Server-seitig berechneter Abhol-/Rückgabezeitpunkt (ISO), für Verfügbarkeitsprüfung. */
+  pickupAt: string;
+  returnAt: string;
   priceTotal: number;
   currency: "CHF";
 }

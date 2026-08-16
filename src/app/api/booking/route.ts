@@ -3,6 +3,7 @@ import type { BookingRequest } from "@/types/booking";
 import { validateBookingRequest } from "@/lib/validation";
 import { isVehicleAvailable } from "@/lib/availability";
 import { calculatePrice } from "@/lib/pricing";
+import { combineDateAndTime } from "@/lib/datetime";
 import { bookingRepository } from "@/lib/repositories";
 import { getVehicleById } from "@/config/vehicles";
 
@@ -24,12 +25,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Fahrzeug ist aktuell nicht verfügbar." }, { status: 400 });
   }
 
-  const available = await isVehicleAvailable({
-    vehicleId: body.vehicleId,
+  const pricing = calculatePrice({
+    vehicle,
     pickupDate: body.pickupDate,
     pickupTime: body.pickupTime,
-    returnDate: body.returnDate,
-    returnTime: body.returnTime,
+    bracketId: body.bracketId,
+    variantId: body.variantId,
+    extraIds: body.extraIds,
+  });
+  if (!pricing.ok) {
+    return NextResponse.json({ error: pricing.error }, { status: 400 });
+  }
+
+  const pickupAt = combineDateAndTime(body.pickupDate, body.pickupTime)!;
+
+  const available = await isVehicleAvailable({
+    vehicleId: body.vehicleId,
+    pickupAt,
+    returnAt: pricing.returnAt,
   });
   if (!available) {
     return NextResponse.json(
@@ -38,21 +51,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const pricing = calculatePrice({
-    vehicle,
-    pickupDate: body.pickupDate,
-    pickupTime: body.pickupTime,
-    returnDate: body.returnDate,
-    returnTime: body.returnTime,
-    tariffId: body.tariffId,
-    kmOptionId: body.kmOptionId,
-    extraIds: body.extraIds,
-  });
-  if (!pricing.ok) {
-    return NextResponse.json({ error: pricing.error }, { status: 400 });
-  }
-
-  const booking = await bookingRepository.create(body, pricing.breakdown.total);
+  const booking = await bookingRepository.create(body, pickupAt, pricing.returnAt, pricing.breakdown.total);
 
   return NextResponse.json({ booking }, { status: 201 });
 }

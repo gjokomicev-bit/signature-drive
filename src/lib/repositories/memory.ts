@@ -26,13 +26,15 @@ const store: MemoryStore =
 let bookingCounter = store.bookings.length;
 
 export const memoryBookingRepository: BookingRepository = {
-  async create(request: BookingRequest, priceTotal: number): Promise<Booking> {
+  async create(request: BookingRequest, pickupAt: Date, returnAt: Date, priceTotal: number): Promise<Booking> {
     bookingCounter += 1;
     const booking: Booking = {
       id: `SD-${Date.now().toString(36).toUpperCase()}-${bookingCounter}`,
       status: "pending",
       createdAt: new Date().toISOString(),
       request,
+      pickupAt: pickupAt.toISOString(),
+      returnAt: returnAt.toISOString(),
       priceTotal,
       currency: "CHF",
     };

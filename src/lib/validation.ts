@@ -8,9 +8,8 @@ export function validateBookingRequest(data: BookingRequest): string[] {
 
   if (!data.vehicleId) errors.push("Fahrzeug fehlt.");
   if (!data.pickupDate || !data.pickupTime) errors.push("Abholzeitpunkt fehlt.");
-  if (!data.returnDate || !data.returnTime) errors.push("Rückgabezeitpunkt fehlt.");
-  if (!data.tariffId) errors.push("Tarif fehlt.");
-  if (!data.kmOptionId) errors.push("Kilometeroption fehlt.");
+  if (!data.bracketId) errors.push("Mietdauer-Paket fehlt.");
+  if (!data.variantId) errors.push("Kilometeroption fehlt.");
   if (!data.acceptedTerms) errors.push("Die AGB müssen akzeptiert werden.");
 
   const c = data.customer;

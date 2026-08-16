@@ -1,25 +1,26 @@
-export type BillingMode = "hourly" | "daily";
-
-export interface TariffPlan {
+/**
+ * Eine Preisvariante innerhalb eines Mietdauer-Pakets (z.B. "unbegrenzt" oder
+ * "300 km inklusive"). Jedes Rate-Bracket hat mindestens eine Variante.
+ */
+export interface RateBracketVariant {
   id: string;
   label: string;
-  description: string;
-  /** Multiplikator auf den Basis-Stunden-/Tagespreis des Fahrzeugs. */
-  priceMultiplier: number;
-  /** Multiplikator auf die Basis-Kaution des Fahrzeugs. */
-  depositMultiplier: number;
-  includedServices: string[];
+  /** "unlimited" = keine Kilometerbegrenzung, sonst inkludierte km für dieses Paket. */
+  includedKm: number | "unlimited";
+  price: number;
 }
 
-export interface KmOption {
+/**
+ * Ein Mietdauer-Paket aus dem Preisraster (z.B. "24 Stunden"). Der Kunde wählt
+ * ein Paket und darin eine Preisvariante – der Gesamtpreis ist ein Fixpreis,
+ * keine berechnete Rate.
+ */
+export interface RateBracket {
   id: string;
   label: string;
-  description: string;
-  /** Zusätzliche Kilometer pro Tag oben auf das Basiskontingent des Fahrzeugs. */
-  extraKmPerDay: number;
-  /** true = unbegrenzte Kilometer, überschreibt extraKmPerDay. */
-  unlimited: boolean;
-  surchargePerDay: number;
+  /** Für die automatische Berechnung des Rückgabezeitpunkts ab Abholung. */
+  durationHours: number;
+  variants: RateBracketVariant[];
 }
 
 export type ExtraPriceType = "flat" | "perDay";
@@ -39,13 +40,10 @@ export interface PriceBreakdownLine {
 
 export interface PriceBreakdown {
   currency: "CHF";
-  billingMode: BillingMode;
-  units: number;
-  unitLabel: string;
+  bracketLabel: string;
+  variantLabel: string;
+  includedKm: number | "unlimited";
   basePrice: number;
-  tariffAdjustment: number;
-  kmSurcharge: number;
-  multiDayDiscount: number;
   extrasTotal: number;
   extrasLines: PriceBreakdownLine[];
   deposit: number;

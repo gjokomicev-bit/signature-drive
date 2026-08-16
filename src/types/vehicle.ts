@@ -1,3 +1,5 @@
+import type { RateBracket } from "./pricing";
+
 export type VehicleCategory = "sportwagen" | "suv" | "cabrio" | "limousine";
 
 export interface VehicleSpecs {
@@ -12,27 +14,12 @@ export interface VehicleSpecs {
   consumption?: string;
 }
 
-export interface MultiDayDiscountTier {
-  /** Ab dieser Anzahl Tage greift der Rabatt (inklusive). */
-  minDays: number;
-  discountPercent: number;
-}
-
 export interface VehiclePricing {
   currency: "CHF";
   deposit: number;
-  hourlyRate: {
-    pricePerHour: number;
-    minHours: number;
-    maxHours: number;
-    includedKm: number;
-  };
-  dailyRate: {
-    pricePerDay: number;
-    includedKmPerDay: number;
-    multiDayDiscounts: MultiDayDiscountTier[];
-  };
+  /** Preis pro Mehrkilometer, sobald das inkludierte Kontingent einer Variante überschritten wird. */
   extraKmPrice: number;
+  rateBrackets: RateBracket[];
 }
 
 export interface Vehicle {
