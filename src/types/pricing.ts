@@ -38,12 +38,17 @@ export interface PriceBreakdownLine {
   amount: number;
 }
 
+export type PricingMode = "package" | "custom";
+
 export interface PriceBreakdown {
   currency: "CHF";
+  mode: PricingMode;
   bracketLabel: string;
   variantLabel: string;
   includedKm: number | "unlimited";
   basePrice: number;
+  /** Nur bei mode "custom": Hinweistext zum interpolierten Richtpreis. */
+  note?: string;
   extrasTotal: number;
   extrasLines: PriceBreakdownLine[];
   campaignDiscount: number;

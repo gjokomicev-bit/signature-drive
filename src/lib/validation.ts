@@ -8,8 +8,16 @@ export function validateBookingRequest(data: BookingRequest): string[] {
 
   if (!data.vehicleId) errors.push("Fahrzeug fehlt.");
   if (!data.pickupDate || !data.pickupTime) errors.push("Abholzeitpunkt fehlt.");
-  if (!data.bracketId) errors.push("Mietdauer-Paket fehlt.");
-  if (!data.variantId) errors.push("Kilometeroption fehlt.");
+
+  if (data.pricingMode === "custom") {
+    if (!data.returnDate || !data.returnTime) errors.push("Rückgabezeitpunkt fehlt.");
+  } else if (data.pricingMode === "package") {
+    if (!data.bracketId) errors.push("Mietdauer-Paket fehlt.");
+    if (!data.variantId) errors.push("Kilometeroption fehlt.");
+  } else {
+    errors.push("Ungültiger Preismodus.");
+  }
+
   if (!data.acceptedTerms) errors.push("Die AGB müssen akzeptiert werden.");
 
   const c = data.customer;
