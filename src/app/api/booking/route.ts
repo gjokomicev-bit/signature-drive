@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     variantId: body.variantId,
     extraIds: body.extraIds,
     signatureDriveOptIn: body.signatureDriveOptIn,
+    voucherCode: body.voucherCode,
   });
   if (!pricing.ok) {
     return NextResponse.json({ error: pricing.error }, { status: 400 });

@@ -47,6 +47,10 @@ export interface PriceBreakdown {
   extrasTotal: number;
   extrasLines: PriceBreakdownLine[];
   campaignDiscount: number;
+  voucherCodeEntered: boolean;
+  voucherValid: boolean;
+  voucherLabel?: string;
+  voucherDiscount: number;
   subtotal: number;
   total: number;
 }

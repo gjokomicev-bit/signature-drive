@@ -52,6 +52,7 @@ function createInitialState(initialVehicleId?: string): BookingRequest {
     customer: EMPTY_CUSTOMER,
     acceptedTerms: false,
     signatureDriveOptIn: false,
+    voucherCode: "",
   };
 }
 
@@ -77,6 +78,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
       variantId: form.variantId,
       extraIds: form.extraIds,
       signatureDriveOptIn: form.signatureDriveOptIn,
+      voucherCode: form.voucherCode,
     });
   }, [
     vehicle,
@@ -86,6 +88,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
     form.variantId,
     form.extraIds,
     form.signatureDriveOptIn,
+    form.voucherCode,
   ]);
 
   function update<K extends keyof BookingRequest>(key: K, value: BookingRequest[K]) {
@@ -254,17 +257,35 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
           )}
 
           {step === 3 && (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {EXTRAS.map((extra) => (
-                <SelectableCard
-                  key={extra.id}
-                  selected={form.extraIds.includes(extra.id)}
-                  onSelect={() => toggleExtra(extra.id)}
-                  title={extra.label}
-                  subtitle={`${formatCurrency(extra.price)}${extra.priceType === "perDay" ? "/Tag" : ""}`}
-                  description={extra.description}
+            <div className="flex flex-col gap-10">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {EXTRAS.map((extra) => (
+                  <SelectableCard
+                    key={extra.id}
+                    selected={form.extraIds.includes(extra.id)}
+                    onSelect={() => toggleExtra(extra.id)}
+                    title={extra.label}
+                    subtitle={`${formatCurrency(extra.price)}${extra.priceType === "perDay" ? "/Tag" : ""}`}
+                    description={extra.description}
+                  />
+                ))}
+              </div>
+
+              <div className="max-w-sm">
+                <TextField
+                  label="Gutscheincode (optional)"
+                  value={form.voucherCode}
+                  onChange={(e) => update("voucherCode", e.target.value)}
+                  placeholder="z.B. SIGNATURE10"
                 />
-              ))}
+                {pricingResult?.ok && pricingResult.breakdown.voucherCodeEntered && (
+                  <p className={`mt-2 text-xs ${pricingResult.breakdown.voucherValid ? "text-accent" : "text-red-600"}`}>
+                    {pricingResult.breakdown.voucherValid
+                      ? `Gutschein eingelöst: ${pricingResult.breakdown.voucherLabel}`
+                      : "Gutscheincode ungültig."}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
@@ -349,6 +370,12 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                     <dt className="text-foreground/60">{SIGNATURE_DRIVE_CAMPAIGN.title}</dt>
                     <dd className="text-foreground">{form.signatureDriveOptIn ? "Ja" : "Nein"}</dd>
                   </div>
+                  {pricingResult.breakdown.voucherValid && (
+                    <div className="flex justify-between">
+                      <dt className="text-foreground/60">Gutschein</dt>
+                      <dd className="text-foreground">{pricingResult.breakdown.voucherLabel}</dd>
+                    </div>
+                  )}
                 </dl>
               </div>
 

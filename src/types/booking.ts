@@ -22,6 +22,8 @@ export interface BookingRequest {
   acceptedTerms: boolean;
   /** Optionale Teilnahme an der "Alpine Signature Drive & Win"-Aktion (siehe src/config/campaign.ts). */
   signatureDriveOptIn: boolean;
+  /** Optionaler Gutscheincode zur Einlösung (siehe src/config/vouchers.ts). */
+  voucherCode?: string;
 }
 
 export type BookingStatus = "pending" | "confirmed" | "cancelled";

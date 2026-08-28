@@ -1,6 +1,7 @@
 import { getExtra } from "@/config/extras";
 import { getRateBracket, getRateBracketVariant } from "@/config/rate-brackets";
 import { SIGNATURE_DRIVE_CAMPAIGN } from "@/config/campaign";
+import { findVoucher } from "@/config/vouchers";
 import { combineDateAndTime } from "@/lib/datetime";
 import type { Vehicle } from "@/types/vehicle";
 import type { PriceBreakdown, PriceBreakdownLine } from "@/types/pricing";
@@ -13,6 +14,7 @@ export interface PricingInput {
   variantId: string;
   extraIds: string[];
   signatureDriveOptIn: boolean;
+  voucherCode?: string;
 }
 
 export type PricingResult =
@@ -61,7 +63,17 @@ export function calculatePrice(input: PricingInput): PricingResult {
   const campaignDiscount = input.signatureDriveOptIn
     ? Math.round((subtotal * SIGNATURE_DRIVE_CAMPAIGN.discountPercent) / 100)
     : 0;
-  const total = Math.round(subtotal - campaignDiscount);
+
+  const voucherCodeEntered = Boolean(input.voucherCode?.trim());
+  const voucher = voucherCodeEntered ? findVoucher(input.voucherCode!) : undefined;
+  const voucherValid = Boolean(voucher);
+  const voucherDiscount = voucher
+    ? voucher.discountType === "percent"
+      ? Math.round((subtotal * voucher.value) / 100)
+      : Math.min(voucher.value, subtotal)
+    : 0;
+
+  const total = Math.max(Math.round(subtotal - campaignDiscount - voucherDiscount), 0);
 
   const breakdown: PriceBreakdown = {
     currency: "CHF",
@@ -72,6 +84,10 @@ export function calculatePrice(input: PricingInput): PricingResult {
     extrasTotal,
     extrasLines,
     campaignDiscount,
+    voucherCodeEntered,
+    voucherValid,
+    voucherLabel: voucher?.label,
+    voucherDiscount,
     subtotal,
     total,
   };
