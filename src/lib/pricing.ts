@@ -105,7 +105,13 @@ export function calculatePrice(input: PricingInput): PricingResult {
     bracketLabel = "Individueller Zeitraum";
     variantLabel = formatDurationHours(hours);
     includedKm = "unlimited";
-    basePrice = Math.round(interpolatePrice(vehicle, hours));
+
+    let rawPrice = interpolatePrice(vehicle, hours);
+    if (hours >= 48) {
+      rawPrice += 100;
+    }
+    basePrice = Math.ceil(rawPrice / 10) * 10;
+
     note = "Richtpreis inkl. unbegrenzte Kilometer, interpoliert aus unserem Standard-Preisraster.";
   } else {
     const bracket = getRateBracket(vehicle.pricing.rateBrackets, input.bracketId);
