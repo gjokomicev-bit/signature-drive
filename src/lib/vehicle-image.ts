@@ -1,5 +1,4 @@
-import { existsSync } from "fs";
-import { join } from "path";
+import { hasPublicFile } from "@/lib/public-file";
 
 /**
  * Prüft server-seitig, ob unter public/ bereits eine echte Fahrzeugdatei
@@ -7,5 +6,5 @@ import { join } from "path";
  * gestalterische Platzhalter (VehiclePlaceholder) angezeigt.
  */
 export function hasVehicleImage(publicPath: string): boolean {
-  return existsSync(join(process.cwd(), "public", publicPath));
+  return hasPublicFile(publicPath);
 }

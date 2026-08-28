@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/config/site";
 
@@ -22,13 +23,17 @@ const NAV_COLUMNS = [
   },
 ];
 
-export function Footer() {
+export function Footer({ hasLogo }: { hasLogo: boolean }) {
   return (
     <footer className="bg-ink text-ink-foreground">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
+            {hasLogo ? (
+              <Image src={SITE.logoPath} alt={SITE.name} width={160} height={40} className="h-8 w-auto" />
+            ) : (
+              <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
+            )}
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-foreground/60">
               {SITE.description}
             </p>

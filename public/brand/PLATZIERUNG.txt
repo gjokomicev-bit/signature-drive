@@ -1,0 +1,12 @@
+Logo hier ablegen (wird automatisch erkannt und im Header/Footer angezeigt):
+
+logo.png
+
+Empfehlung:
+- Helle/weisse Version, da Header und Footer einen dunklen Hintergrund haben
+- Transparenter Hintergrund (PNG)
+- Querformat, ca. 400x100px oder ähnliches Seitenverhältnis
+- Wird auf 32px Höhe skaliert dargestellt
+
+Solange keine Datei hier liegt, wird automatisch der Text-Schriftzug
+"Signature Drive" angezeigt. Diese Datei kann danach gelöscht werden.

@@ -5,6 +5,8 @@ export const SITE = {
     "Exklusive Vermietung von Performance- und Luxusfahrzeugen in Bern, Thun, Aargau und Zürich.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.signature-drive.ch",
   region: "Bern · Thun · Aargau · Zürich",
+  /** Logo für dunklen Hintergrund (Header/Footer) – helle/weisse Version empfohlen. */
+  logoPath: "/brand/logo.png",
   contact: {
     email: "info@signature-drive.ch",
     phone: "+41 31 000 00 00",

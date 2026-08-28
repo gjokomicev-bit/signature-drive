@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { SITE } from "@/config/site";
+import { hasPublicFile } from "@/lib/public-file";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,12 +31,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const hasLogo = hasPublicFile(SITE.logoPath);
+
   return (
     <html lang="de-CH" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <Header />
+        <Header hasLogo={hasLogo} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer hasLogo={hasLogo} />
         <WhatsAppButton />
       </body>
     </html>

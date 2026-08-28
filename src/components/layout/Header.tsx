@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +15,7 @@ const NAV_LINKS = [
   { href: "/faq", label: "FAQ" },
 ];
 
-export function Header() {
+export function Header({ hasLogo }: { hasLogo: boolean }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,7 +43,11 @@ export function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-8 lg:px-12">
         <Link href="/" className="flex flex-col leading-none text-ink-foreground">
-          <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
+          {hasLogo ? (
+            <Image src={SITE.logoPath} alt={SITE.name} width={160} height={40} className="h-8 w-auto" priority />
+          ) : (
+            <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
+          )}
           <span className="hidden text-[10px] uppercase tracking-[0.3em] text-ink-foreground/50 sm:block">
             {SITE.region}
           </span>
