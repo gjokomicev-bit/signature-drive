@@ -177,9 +177,24 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
           prüfen die Verfügbarkeit und melden uns innert 24 Stunden persönlich bei Ihnen zur Bestätigung.
         </p>
         <p className="mt-2 text-sm text-foreground/60">Voraussichtlicher Gesamtpreis: {formatCurrency(confirmation.total)}</p>
-        <Button href="/" size="lg" className="mt-8">
-          Zur Startseite
-        </Button>
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Button
+            href={buildWhatsAppLink(
+              SITE.contact.whatsapp,
+              `Hallo ${SITE.name}, ich möchte meine Buchungsanfrage ${confirmation.id}${
+                vehicle ? ` (${vehicle.brand} ${vehicle.model})` : ""
+              } bestätigen.`,
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="lg"
+          >
+            Buchung per WhatsApp bestätigen
+          </Button>
+          <Button href="/" variant="outline" size="lg">
+            Zur Startseite
+          </Button>
+        </div>
       </div>
     );
   }

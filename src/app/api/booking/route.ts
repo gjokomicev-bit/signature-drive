@@ -6,6 +6,7 @@ import { calculatePrice } from "@/lib/pricing";
 import { combineDateAndTime } from "@/lib/datetime";
 import { bookingRepository } from "@/lib/repositories";
 import { getVehicleById } from "@/config/vehicles";
+import { sendBookingEmails } from "@/lib/email";
 
 export async function POST(request: Request) {
   let body: BookingRequest;
@@ -54,6 +55,8 @@ export async function POST(request: Request) {
   }
 
   const booking = await bookingRepository.create(body, pickupAt, pricing.returnAt, pricing.breakdown.total);
+
+  await sendBookingEmails(booking, vehicle, pricing.breakdown);
 
   return NextResponse.json({ booking }, { status: 201 });
 }
