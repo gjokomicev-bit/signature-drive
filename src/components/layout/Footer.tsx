@@ -7,6 +7,7 @@ const NAV_COLUMNS = [
     links: [
       { href: "/fahrzeuge", label: "Fahrzeuge" },
       { href: "/buchung", label: "Buchung" },
+      { href: "/aufbereitung", label: "Aufbereitung" },
       { href: "/ueber-uns", label: "Über uns" },
       { href: "/faq", label: "FAQ" },
     ],
