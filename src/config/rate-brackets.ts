@@ -42,7 +42,7 @@ export const STANDARD_RATE_BRACKETS: RateBracket[] = [
     label: "48 Stunden",
     durationHours: 48,
     variants: [
-      { id: "unlimited", label: "Unbegrenzt", includedKm: "unlimited", price: 2590 },
+      { id: "unlimited", label: "Unbegrenzt", includedKm: "unlimited", price: 2790 },
       { id: "included-600", label: "600 km inklusive", includedKm: 600, price: 1990 },
     ],
   },
