@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -42,9 +41,10 @@ export function Header({ hasLogo }: { hasLogo: boolean }) {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-8 lg:px-12">
-        <Link href="/" className="flex flex-col leading-none text-ink-foreground">
+        <Link href="/" className="flex flex-col items-start leading-none text-ink-foreground">
           {hasLogo ? (
-            <Image src={SITE.logoPath} alt={SITE.name} width={160} height={40} className="h-8 w-auto" priority />
+            // eslint-disable-next-line @next/next/no-img-element -- statisch, vorab optimiert; next/image-Optimizer versagt bei diesem Asset
+            <img src={SITE.logoPath} alt={SITE.name} className="h-14 w-auto" />
           ) : (
             <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
           )}

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { SITE } from "@/config/site";
 
@@ -30,7 +29,8 @@ export function Footer({ hasLogo }: { hasLogo: boolean }) {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             {hasLogo ? (
-              <Image src={SITE.logoPath} alt={SITE.name} width={160} height={40} className="h-8 w-auto" />
+              // eslint-disable-next-line @next/next/no-img-element -- statisch, vorab optimiert; next/image-Optimizer versagt bei diesem Asset
+              <img src={SITE.logoPath} alt={SITE.name} className="h-16 w-auto" />
             ) : (
               <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
             )}

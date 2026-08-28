@@ -5,8 +5,10 @@ logo.png
 Empfehlung:
 - Helle/weisse Version, da Header und Footer einen dunklen Hintergrund haben
 - Transparenter Hintergrund (PNG)
-- Querformat, ca. 400x100px oder ähnliches Seitenverhältnis
-- Wird auf 32px Höhe skaliert dargestellt
+- Datei bereits selbst auf ca. 600-800px Breite verkleinern/komprimieren
+  (Next.js' Bildoptimierer wird für dieses Asset bewusst nicht verwendet,
+  daher zählt die Dateigrösse hier direkt für die Ladezeit)
+- Wird im Header auf 56px, im Footer auf 64px Höhe dargestellt
 
 Solange keine Datei hier liegt, wird automatisch der Text-Schriftzug
 "Signature Drive" angezeigt. Diese Datei kann danach gelöscht werden.
