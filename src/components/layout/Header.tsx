@@ -48,9 +48,6 @@ export function Header({ hasLogo }: { hasLogo: boolean }) {
           ) : (
             <span className="text-lg font-medium uppercase tracking-[0.2em]">Signature Drive</span>
           )}
-          <span className="hidden text-[10px] uppercase tracking-[0.3em] text-ink-foreground/50 sm:block">
-            {SITE.region}
-          </span>
         </Link>
 
         <nav className="hidden items-center gap-10 md:flex">
