@@ -40,8 +40,6 @@ export function PriceSummary({ breakdown }: { breakdown: PriceBreakdown }) {
           <dd className="text-foreground">{formatCurrency(breakdown.total)}</dd>
         </div>
       </dl>
-
-      {breakdown.note && <p className="mt-4 text-xs text-foreground/50">{breakdown.note}</p>}
     </div>
   );
 }

@@ -15,13 +15,8 @@ export interface BookingRequest {
   vehicleId: string;
   pickupDate: string;
   pickupTime: string;
-  /** "package" = Mietdauer-Paket (bracketId/variantId), "custom" = individueller Zeitraum (returnDate/returnTime). */
-  pricingMode: "package" | "custom";
   bracketId: string;
   variantId: string;
-  /** Nur bei pricingMode "custom". */
-  returnDate?: string;
-  returnTime?: string;
   extraIds: string[];
   customer: CustomerDetails;
   acceptedTerms: boolean;

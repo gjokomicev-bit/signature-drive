@@ -11,9 +11,11 @@ import { getAvailableVehicles, getVehicleById } from "@/config/vehicles";
 import { STANDARD_RATE_BRACKETS } from "@/config/rate-brackets";
 import { EXTRAS } from "@/config/extras";
 import { SIGNATURE_DRIVE_CAMPAIGN } from "@/config/campaign";
+import { SITE } from "@/config/site";
 import { calculatePrice } from "@/lib/pricing";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { todayIsoDate } from "@/lib/datetime";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 import type { BookingRequest, CustomerDetails } from "@/types/booking";
 import type { RateBracket } from "@/types/pricing";
 
@@ -46,11 +48,8 @@ function createInitialState(initialVehicleId?: string): BookingRequest {
     vehicleId: initialVehicleId ?? "",
     pickupDate: "",
     pickupTime: "10:00",
-    pricingMode: "package",
     bracketId: brackets[0].id,
     variantId: brackets[0].variants[0].id,
-    returnDate: "",
-    returnTime: "10:00",
     extraIds: [],
     customer: EMPTY_CUSTOMER,
     acceptedTerms: false,
@@ -77,11 +76,8 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
       vehicle,
       pickupDate: form.pickupDate,
       pickupTime: form.pickupTime,
-      pricingMode: form.pricingMode,
       bracketId: form.bracketId,
       variantId: form.variantId,
-      returnDate: form.returnDate,
-      returnTime: form.returnTime,
       extraIds: form.extraIds,
       signatureDriveOptIn: form.signatureDriveOptIn,
       voucherCode: form.voucherCode,
@@ -90,11 +86,8 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
     vehicle,
     form.pickupDate,
     form.pickupTime,
-    form.pricingMode,
     form.bracketId,
     form.variantId,
-    form.returnDate,
-    form.returnTime,
     form.extraIds,
     form.signatureDriveOptIn,
     form.voucherCode,
@@ -116,11 +109,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
   }
 
   function selectBracketVariant(bracketId: string, variantId: string) {
-    setForm((prev) => ({ ...prev, pricingMode: "package", bracketId, variantId }));
-  }
-
-  function selectCustomMode() {
-    setForm((prev) => ({ ...prev, pricingMode: "custom" }));
+    setForm((prev) => ({ ...prev, bracketId, variantId }));
   }
 
   function updateCustomer<K extends keyof CustomerDetails>(key: K, value: CustomerDetails[K]) {
@@ -225,10 +214,7 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                   </span>
                   <div className="mt-3 flex flex-col gap-2">
                     {bracket.variants.map((variant) => {
-                      const selected =
-                        form.pricingMode === "package" &&
-                        form.bracketId === bracket.id &&
-                        form.variantId === variant.id;
+                      const selected = form.bracketId === bracket.id && form.variantId === variant.id;
                       return (
                         <button
                           key={variant.id}
@@ -247,21 +233,26 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                 </div>
               ))}
 
-              <button
-                type="button"
-                onClick={selectCustomMode}
-                className={`flex flex-col items-start border p-5 text-left transition-colors sm:col-span-2 ${
-                  form.pricingMode === "custom" ? "border-accent bg-surface" : "border-border-subtle hover:border-foreground/40"
-                }`}
+              <a
+                href={buildWhatsAppLink(
+                  SITE.contact.whatsapp,
+                  `Hallo ${SITE.name}, ich interessiere mich für einen individuellen Mietzeitraum${
+                    vehicle ? ` für den ${vehicle.brand} ${vehicle.model}` : ""
+                  }.`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-start border border-border-subtle p-5 text-left transition-colors hover:border-foreground/40 sm:col-span-2"
               >
                 <span className="text-sm font-medium uppercase tracking-[0.1em] text-foreground">
                   Individueller Zeitraum
                 </span>
                 <span className="mt-2 text-sm text-foreground/60">
-                  Wählen Sie Abholung und Rückgabe frei nach Datum und Uhrzeit – der Preis wird individuell aus
-                  unserem Preisraster berechnet.
+                  Passt keines der Pakete? Fragen Sie Ihren Wunschzeitraum unverbindlich per WhatsApp an – wir
+                  erstellen Ihnen ein persönliches Angebot.
                 </span>
-              </button>
+                <span className="mt-3 text-xs uppercase tracking-[0.2em] text-accent">Nur auf Anfrage →</span>
+              </a>
             </div>
           )}
 
@@ -280,35 +271,10 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                 value={form.pickupTime}
                 onChange={(e) => update("pickupTime", e.target.value)}
               />
-
-              {form.pricingMode === "custom" ? (
-                <>
-                  <TextField
-                    label="Rückgabedatum"
-                    type="date"
-                    min={form.pickupDate || todayIsoDate()}
-                    value={form.returnDate}
-                    onChange={(e) => update("returnDate", e.target.value)}
-                  />
-                  <TextField
-                    label="Rückgabezeit"
-                    type="time"
-                    value={form.returnTime}
-                    onChange={(e) => update("returnTime", e.target.value)}
-                  />
-                  {pricingResult?.ok && (
-                    <p className="text-sm text-foreground/60 sm:col-span-2">
-                      Mietdauer: {pricingResult.breakdown.variantLabel} · Richtpreis{" "}
-                      {formatCurrency(pricingResult.breakdown.basePrice)}
-                    </p>
-                  )}
-                </>
-              ) : (
-                pricingResult?.ok && (
-                  <p className="text-sm text-foreground/60 sm:col-span-2">
-                    Rückgabe: {formatDateTime(pricingResult.returnAt)} Uhr ({pricingResult.breakdown.bracketLabel})
-                  </p>
-                )
+              {pricingResult?.ok && (
+                <p className="text-sm text-foreground/60 sm:col-span-2">
+                  Rückgabe: {formatDateTime(pricingResult.returnAt)} Uhr ({pricingResult.breakdown.bracketLabel})
+                </p>
               )}
             </div>
           )}
@@ -417,17 +383,11 @@ export function BookingWizard({ initialVehicleId }: { initialVehicleId?: string 
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">Mietdauer</dt>
-                    <dd className="text-foreground">
-                      {pricingResult.breakdown.mode === "custom"
-                        ? pricingResult.breakdown.variantLabel
-                        : pricingResult.breakdown.bracketLabel}
-                    </dd>
+                    <dd className="text-foreground">{pricingResult.breakdown.bracketLabel}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">Kilometer</dt>
-                    <dd className="text-foreground">
-                      {pricingResult.breakdown.mode === "custom" ? "Unbegrenzt" : pricingResult.breakdown.variantLabel}
-                    </dd>
+                    <dd className="text-foreground">{pricingResult.breakdown.variantLabel}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-foreground/60">{SIGNATURE_DRIVE_CAMPAIGN.title}</dt>

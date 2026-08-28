@@ -17,12 +17,3 @@ export function formatDateTime(date: Date): string {
     timeStyle: "short",
   }).format(date);
 }
-
-export function formatDurationHours(hours: number): string {
-  const totalHours = Math.round(hours);
-  const days = Math.floor(totalHours / 24);
-  const remainder = totalHours % 24;
-  if (days === 0) return `${totalHours} Std.`;
-  if (remainder === 0) return `${days} Tag${days === 1 ? "" : "e"}`;
-  return `${days} Tag${days === 1 ? "" : "e"} ${remainder} Std.`;
-}

@@ -3,7 +3,6 @@ import { getRateBracket, getRateBracketVariant } from "@/config/rate-brackets";
 import { SIGNATURE_DRIVE_CAMPAIGN } from "@/config/campaign";
 import { findVoucher } from "@/config/vouchers";
 import { combineDateAndTime, diffInHours } from "@/lib/datetime";
-import { formatDurationHours } from "@/lib/format";
 import type { Vehicle } from "@/types/vehicle";
 import type { PriceBreakdown, PriceBreakdownLine } from "@/types/pricing";
 
@@ -11,11 +10,8 @@ export interface PricingInput {
   vehicle: Vehicle;
   pickupDate: string;
   pickupTime: string;
-  pricingMode: "package" | "custom";
   bracketId: string;
   variantId: string;
-  returnDate?: string;
-  returnTime?: string;
   extraIds: string[];
   signatureDriveOptIn: boolean;
   voucherCode?: string;
@@ -25,46 +21,12 @@ export type PricingResult =
   | { ok: true; breakdown: PriceBreakdown; returnAt: Date }
   | { ok: false; error: string };
 
-const CUSTOM_MIN_HOURS = 3;
-const CUSTOM_MAX_HOURS = 24 * 30;
-
 /**
- * Interpoliert einen Richtpreis für eine beliebige Mietdauer anhand der im
- * Fixpreis-Raster hinterlegten Stützpunkte (unbegrenzte-km-Variante je
- * Paket, sonst die einzige verfügbare Variante). Zwischen zwei Stützpunkten
- * wird linear interpoliert, darüber hinaus mit der Steigung des letzten
- * Segments extrapoliert.
- */
-function interpolatePrice(vehicle: Vehicle, hours: number): number {
-  const anchors = vehicle.pricing.rateBrackets
-    .map((bracket) => {
-      const variant = bracket.variants.find((v) => v.id === "unlimited") ?? bracket.variants[0];
-      return { hours: bracket.durationHours, price: variant.price };
-    })
-    .sort((a, b) => a.hours - b.hours);
-
-  if (hours <= anchors[0].hours) return anchors[0].price;
-
-  for (let i = 0; i < anchors.length - 1; i++) {
-    const a = anchors[i];
-    const b = anchors[i + 1];
-    if (hours <= b.hours) {
-      const ratio = (hours - a.hours) / (b.hours - a.hours);
-      return a.price + ratio * (b.price - a.price);
-    }
-  }
-
-  const last = anchors[anchors.length - 1];
-  const prev = anchors[anchors.length - 2];
-  const slope = (last.price - prev.price) / (last.hours - prev.hours);
-  return last.price + slope * (hours - last.hours);
-}
-
-/**
- * Zentrale Preisberechnung. Unterstützt zwei Modi: feste Mietdauer-Pakete
- * (siehe src/config/rate-brackets.ts) sowie einen individuellen Zeitraum,
- * dessen Richtpreis aus denselben Paketpreisen interpoliert wird – hier
- * findet keine UI-seitige Preislogik statt.
+ * Zentrale Preisberechnung anhand des Fixpreis-Rasters (siehe
+ * src/config/rate-brackets.ts). Der Rückgabezeitpunkt wird automatisch aus
+ * Abholzeitpunkt + Paketdauer berechnet – hier findet keine UI-seitige
+ * Preislogik statt. Individuelle Zeiträume ausserhalb der Pakete laufen
+ * nicht über diese Berechnung, sondern als Anfrage (siehe BookingWizard).
  */
 export function calculatePrice(input: PricingInput): PricingResult {
   const { vehicle } = input;
@@ -74,62 +36,17 @@ export function calculatePrice(input: PricingInput): PricingResult {
     return { ok: false, error: "Bitte Abholdatum und -zeit angeben." };
   }
 
-  let returnAt: Date;
-  let bracketLabel: string;
-  let variantLabel: string;
-  let includedKm: number | "unlimited";
-  let basePrice: number;
-  let note: string | undefined;
-
-  if (input.pricingMode === "custom") {
-    const parsedReturn = combineDateAndTime(input.returnDate ?? "", input.returnTime ?? "");
-    if (!parsedReturn) {
-      return { ok: false, error: "Bitte Rückgabedatum und -zeit angeben." };
-    }
-    if (parsedReturn <= pickup) {
-      return { ok: false, error: "Der Rückgabezeitpunkt muss nach der Abholung liegen." };
-    }
-
-    const hours = diffInHours(pickup, parsedReturn);
-    if (hours < CUSTOM_MIN_HOURS) {
-      return { ok: false, error: `Mindestmietdauer beträgt ${CUSTOM_MIN_HOURS} Stunden.` };
-    }
-    if (hours > CUSTOM_MAX_HOURS) {
-      return {
-        ok: false,
-        error: "Für Mietzeiträume über 30 Tage kontaktieren Sie uns bitte direkt.",
-      };
-    }
-
-    returnAt = parsedReturn;
-    bracketLabel = "Individueller Zeitraum";
-    variantLabel = formatDurationHours(hours);
-    includedKm = "unlimited";
-
-    let rawPrice = interpolatePrice(vehicle, hours);
-    if (hours >= 48) {
-      rawPrice += 100;
-    }
-    basePrice = Math.ceil(rawPrice / 10) * 10;
-
-    note = "Richtpreis inkl. unbegrenzte Kilometer, interpoliert aus unserem Standard-Preisraster.";
-  } else {
-    const bracket = getRateBracket(vehicle.pricing.rateBrackets, input.bracketId);
-    if (!bracket) {
-      return { ok: false, error: "Ungültiges Mietdauer-Paket ausgewählt." };
-    }
-
-    const variant = getRateBracketVariant(bracket, input.variantId);
-    if (!variant) {
-      return { ok: false, error: "Ungültige Kilometeroption ausgewählt." };
-    }
-
-    returnAt = new Date(pickup.getTime() + bracket.durationHours * 60 * 60 * 1000);
-    bracketLabel = bracket.label;
-    variantLabel = variant.label;
-    includedKm = variant.includedKm;
-    basePrice = variant.price;
+  const bracket = getRateBracket(vehicle.pricing.rateBrackets, input.bracketId);
+  if (!bracket) {
+    return { ok: false, error: "Ungültiges Mietdauer-Paket ausgewählt." };
   }
+
+  const variant = getRateBracketVariant(bracket, input.variantId);
+  if (!variant) {
+    return { ok: false, error: "Ungültige Kilometeroption ausgewählt." };
+  }
+
+  const returnAt = new Date(pickup.getTime() + bracket.durationHours * 60 * 60 * 1000);
 
   const durationHours = diffInHours(pickup, returnAt);
   const days = Math.max(Math.ceil(durationHours / 24), 1);
@@ -145,7 +62,7 @@ export function calculatePrice(input: PricingInput): PricingResult {
   }
   const extrasTotal = extrasLines.reduce((sum, l) => sum + l.amount, 0);
 
-  const subtotal = basePrice + extrasTotal;
+  const subtotal = variant.price + extrasTotal;
   const campaignDiscount = input.signatureDriveOptIn
     ? Math.round((subtotal * SIGNATURE_DRIVE_CAMPAIGN.discountPercent) / 100)
     : 0;
@@ -163,12 +80,10 @@ export function calculatePrice(input: PricingInput): PricingResult {
 
   const breakdown: PriceBreakdown = {
     currency: "CHF",
-    mode: input.pricingMode,
-    bracketLabel,
-    variantLabel,
-    includedKm,
-    basePrice,
-    note,
+    bracketLabel: bracket.label,
+    variantLabel: variant.label,
+    includedKm: variant.includedKm,
+    basePrice: variant.price,
     extrasTotal,
     extrasLines,
     campaignDiscount,
